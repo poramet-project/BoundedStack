@@ -1,16 +1,21 @@
 package BoundedStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 /**
  * BoundedStack - ATD แทนรายการชุดข้อความที่ผู้ใช้กรอกเข้ามา
  * 
  * ค่านามธรรม (A): ลำดับของชุดข้อความ เช่น [แอปเปิ้ล, กล้วย, ส้ม]
  * 
- * ตัวอย่างการใช้งาน
- * ??????
+ * ตัวอย่างการใช้งาน:
+ * BoundedStack b = new BoundedStack();
+ * b.puch("Bohemian Rhapsody");
+ * b.push("Imagine");
+ * System.out.println(b.size()); // 2
  */
 public class BoundedStack {
     private final List<String> elements;
@@ -29,16 +34,27 @@ public class BoundedStack {
     // ข้อความห้ามซ้ำกัน
     // ห้ามมีอักษรพิเศษในข้อความ
 
-
     // Safety from rep exposure:
     // Copy ข้อมูลขาเข้าและขาออก
-    // ประกาศ elements และ capacity เป็น final เพื่อไม่ให้ผู้ใช้เข้าถึงหรือแก้ไขได้โดยตรง
+    // ประกาศ elements และ capacity เป็น final
+    // เพื่อไม่ให้ผู้ใช้เข้าถึงหรือแก้ไขได้โดยตรง
 
     /**
      * CheckRep
      */
     private void checkRep() {
-
+        assert elements != null;
+        assert elements.size() <= capacity;
+        Set<String> seen = new HashSet<>();
+        for (String s : elements) {
+            assert s != null;
+            assert !s.isEmpty();
+            assert seen.add(s);
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                assert Character.isLetterOrDigit(c) || c == ' ';
+            }
+        }
     }
 
     // ===== Creator =====
@@ -59,6 +75,32 @@ public class BoundedStack {
      * @throws IllegalArgumentException ถ้า initial ผิดเงื่อนไข
      */
     public BoundedStack(List<String> initial) {
+        if (initial == null) {
+            throw new IllegalArgumentException();
+        }
+        if (initial.size() > capacity) {
+            throw new IllegalArgumentException();
+        }
+
+        Set<String> seen = new HashSet<>();
+        for (String s : initial) {
+            if (s == null) {
+                throw new IllegalArgumentException();
+            }
+            if (s == "") {
+                throw new IllegalArgumentException();
+            }
+            if (!seen.add(s)) {
+                throw new IllegalArgumentException();
+            }
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (!Character.isLetterOrDigit(c) && c != ' ') {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+
         this.elements = new ArrayList<>(initial);
         checkRep();
     }
@@ -68,21 +110,42 @@ public class BoundedStack {
     /**
      * เพิ่มข้อความตำแหน่งสุดท้ายใน elements
      * 
-     * @param information ข้อความ, ต้องไม่เป็น null ไม่เป็นสตริงว่าง ไม่เป็นอักษรพิเศษ                 
+     * @param information ข้อความ, ต้องไม่เป็น null ไม่เป็นสตริงว่าง
+     *                    ไม่เป็นอักษรพิเศษ
      * @return true ถ้าเพิ่มข้อความสำเร็จ, false ถ้าเพิ่มข้อความไม่สำเร็จ
      * @throws IllegalArgumentException ถ้า information ผิดเงื่อนไข
      */
     public boolean push(String information) {
+
+        if (information == null || information.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < information.length(); i++) {
+            char c = information.charAt(i);
+            if (!Character.isLetterOrDigit(c) && c != ' ') {
+                throw new IllegalArgumentException();
+            }
+        }
+        if (elements.size() == capacity || elements.size() > capacity || elements.contains(information)) {
+            return false;
+        }
+
+        elements.add(information);
+        checkRep();
         return true;
     }
 
     /**
      * ลบข้อความออกจาก elements
-     *  
+     * 
      * @return true ถ้าลบข้อความสำเร็จ, false ถ้าไม่พบข้อความ
-     * @throws IndexOutOfBoundsExceptionถ้า เมื่อ elements ว่างอยู่ (ไม่มีสมาชิกเลย)
      */
     public boolean pop() {
+        if (elements.isEmpty()||elements.size()==0) {
+            return false;
+        }
+        elements.remove(elements.size() - 1);
+        checkRep();
         return true;
     }
 
@@ -110,33 +173,41 @@ public class BoundedStack {
      * คืนข้อความตำแหน่งสุดท้าย
      * 
      * @return ข้อความตำแหน่งสุดท้าย
-     * @throws IndexOutOfBoundsExceptionถ้า เมื่อ elements ว่างอยู่ (ไม่มีสมาชิกเลย)
+     * @throws IndexOutOfBoundsException ถ้า เมื่อ elements ว่างอยู่ (ไม่มีสมาชิกเลย)
      */
-    public String peek(){
-        return "";
+    public String peek() {
+       if (elements.isEmpty()) {
+        throw new IndexOutOfBoundsException();
+       }
+        return elements.get(elements.size()-1);
     }
-    
+
     /**
      * คืนรายการข้อความทั้งหมดตามลำดับ
      * 
      * @return รายการขชุดข้อความตามลำดับ
-     * @throws IllegalArgumentException ถ้า information ผิดเงื่อนไข
-    */
-   public List<String> getElements() {
-       return new ArrayList<>(elements);
+     */
+    public List<String> getElements() {
+        return new ArrayList<>(elements);
     }
 
     /**
      * ตรวจสอบว่ามีข้อความนี้อยู่ใน elements หรือไม่
      * 
-     * @param information ข้อความ, ต้องไม่เป็น null ไม่เป็นสตริงว่าง ไม่เป็นอักษรพิเศษ
+     * @param information ข้อความ, ต้องไม่เป็น null ไม่เป็นสตริงว่าง
+     *                    ไม่เป็นอักษรพิเศษ
      * @return true ถ้าพบข้อความ , false ถ้าไม่พบข้อความ
      * @throws IllegalArgumentException ถ้า information ผิดเงื่อนไข
      */
     public boolean contains(String information) {
-        return true;
+         for (int i = 0; i < information.length(); i++) {
+                char c = information.charAt(i);
+                if (!Character.isLetterOrDigit(c) && c != ' ') {
+                    throw new IllegalArgumentException();
+                }
+            }
+        return elements.contains(information);
     }
-    
 
     // ===== Producer =====
 
@@ -146,6 +217,8 @@ public class BoundedStack {
      * @return รายการชุดข้อความที่สลับลำดับแล้ว
      */
     public BoundedStack shuffled() {
-        return new BoundedStack();
+        List<String> copy = new ArrayList<String>(elements);
+        Collections.shuffle(copy);
+        return new BoundedStack(copy);
     }
 }
