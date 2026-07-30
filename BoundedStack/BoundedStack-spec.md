@@ -6,7 +6,7 @@
 
 ตัวอย่างการใช้:
 ```java
-BoundedStack b = new BoundedStack();
+BoundedStack b = new BoundedStack(2);
 b.push("Bohemian Rhapsody");
 b.push("Imagine");
 b.size(); // 2
@@ -54,11 +54,11 @@ AF(elements, capacity) = ลำดับข้อความตาม index ใ
 
 ### Creator
 
-**`BoundedStack()`**
+**`BoundedStack(0)`**
 สร้าง stack เปล่าๆ ไม่มีอะไรอยู่ข้างใน
 
 **`BoundedStack(List<String> initial)`**
-- ต้องการ: `initial` ห้าม null, ขนาดต้องไม่เกิน capacity, ในนั้นห้ามมีตัวไหน null/ว่าง/ซ้ำ/มีอักขระพิเศษ
+- ต้องการ: `initial` ห้าม null, ในนั้นห้ามมีตัวไหน null/ว่าง/ซ้ำ/มีอักขระพิเศษ
 - ทำ: สร้าง stack ที่มีข้อมูลตาม `initial` (copy มา ไม่แชร์ reference)
 - โยน: `IllegalArgumentException` ถ้าผิดเงื่อนไขข้อไหนก็ตามข้างบน
 

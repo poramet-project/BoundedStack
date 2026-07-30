@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class BoundedStack {
     private final List<String> elements;
-    private final int capacity = 100;
+    private final int capacity;
 
     // Abstraction Function:
     // AF(elements,capacity) = เก็บรายการชุดข้อความ
@@ -63,25 +63,24 @@ public class BoundedStack {
      * สร้าง list ว่างไว้เก็บรายการชุดข้อความ
      * 
      */
-    public BoundedStack() {
+    public BoundedStack(int capacity) {
         this.elements = new ArrayList<>();
+        this.capacity = capacity;
         checkRep();
     }
 
     /**
      * สร้าง list จากชุดข้อความที่ผู้ใช้ให้มา
      * 
-     * @param initial รายการชุดข้อความเริ่มต้น, ไม่ซ้ำกันและไม่เกิน capacity
+     * @param initial รายการชุดข้อความเริ่มต้น, ไม่ซ้ำกัน
      * @throws IllegalArgumentException ถ้า initial ผิดเงื่อนไข
      */
     public BoundedStack(List<String> initial) {
+       
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-        if (initial.size() > capacity) {
-            throw new IllegalArgumentException();
-        }
-
+       this.capacity = initial.size();
         Set<String> seen = new HashSet<>();
         for (String s : initial) {
             if (s == null) {

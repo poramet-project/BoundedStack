@@ -51,7 +51,7 @@ public class BoundedStackTest {
         System.out.println("-- Creators --");
 
         // กรณี list ว่างเปล่า
-        BoundedStack empty = new BoundedStack();
+        BoundedStack empty = new BoundedStack(0);
         check("new() -> empty", empty.size() == 0);
         check("new() -> contains nothing", !empty.contains("anything"));
 
@@ -93,7 +93,7 @@ public class BoundedStackTest {
     private static void testAdd() {
         System.out.println("\n-- Add --");
 
-        BoundedStack s = new BoundedStack();
+        BoundedStack s = new BoundedStack(1);
         check("add(Hello) -> returns true", s.push("Bohemian Rhapsody"));
         check("add(Hello) -> size 1", s.size() == 1);
         check("add(Hello) -> found by contains", s.contains("Bohemian Rhapsody"));
@@ -128,7 +128,7 @@ public class BoundedStackTest {
         check("add(Special characters) -> throws IllegalArgumentException", threwSpecial);
 
         // boundary: เติมจนเต็มพอดีแล้วเติมเพิ่ม
-        BoundedStack full = new BoundedStack();
+        BoundedStack full = new BoundedStack(100);
         for (int i = 0; i < full.getCapacity(); i++) {
             full.push("song" + i);
         }
@@ -184,7 +184,7 @@ public class BoundedStackTest {
         }
         check("contains(Special characters) -> throws IllegalArgumentException", threwSpecial);
 
-        BoundedStack n = new BoundedStack();
+        BoundedStack n = new BoundedStack(0);
         boolean threwNull = false;
         try {
             n.peek();
@@ -217,15 +217,15 @@ public class BoundedStackTest {
                 original.size() == 4);
 
         // boundary: shuffle ลิสต์ว่างต้องไม่พัง
-        BoundedStack emptyShuffled = new BoundedStack().shuffled();
+        BoundedStack emptyShuffled = new BoundedStack(0).shuffled();
         check("shuffling an empty list is safe", emptyShuffled.size() == 0);
     }
 
     private static void testExposure() {
         System.out.println("\n-- Exposure --");
 
-        // ขาออก: แก้ list ที่ได้จาก songs() ต้องไม่กระทบ rep
-        BoundedStack s = new BoundedStack();
+        // ขาออก: แก้ list ที่ได้จาก getElement() ต้องไม่กระทบ rep
+        BoundedStack s = new BoundedStack(1);
         s.push("A");
 
         List<String> got = s.getElements();
