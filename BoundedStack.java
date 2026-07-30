@@ -204,6 +204,9 @@ public class BoundedStack {
      * @throws IllegalArgumentException ถ้า information ผิดเงื่อนไข
      */
     public boolean contains(String information) {
+        if (information==null) {
+             throw new IllegalArgumentException();
+        }
         for (int i = 0; i < information.length(); i++) {
             char c = information.charAt(i);
             if (!Character.isLetterOrDigit(c) && c != ' ') {
