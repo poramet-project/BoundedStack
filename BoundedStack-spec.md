@@ -99,7 +99,7 @@ AF(elements, capacity) = ลำดับข้อความตาม index ใ
 
 ---
 
-## ตาราง Exception เร็วๆ
+## ตาราง Exception 
 
 | เมธอด | throw เมื่อไหร่ | throw อะไร |
 |---|---|---|
