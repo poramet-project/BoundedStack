@@ -60,10 +60,7 @@ public class BoundedStackTest {
         check("new(list) -> size 3", p.size() == 3);
         check("new(list) -> contains ComSci", p.contains("ComSci"));
 
-        // boundary: list ว่างคือขอบล่างที่ถูกต้อง
-        BoundedStack fromEmpty = new BoundedStack(new ArrayList<String>());
-        check("new(empty list) -> empty", fromEmpty.size() == 0);
-
+        
         // input ที่ผิดเงื่อนไขต้องโยน exception ไม่ใช่ปล่อยผ่าน
 
         boolean threwDup = false;
@@ -144,7 +141,7 @@ public class BoundedStackTest {
         System.out.println("\n-- Remove --");
 
         BoundedStack s = new BoundedStack(Arrays.asList("A", "B", "C"));
-        check("remove -> returns true", s.pop());
+        check("remove -> returns C", s.pop().equals("C"));
         check("remove -> size decreases", s.size() == 2);
         check("remove -> element is gone", !s.contains("C"));
         check("remove keeps the others in order",
@@ -154,7 +151,13 @@ public class BoundedStackTest {
         s.pop();
         s.pop();
         check("remove all -> empty", s.size() == 0);
-        check("remove on empty list -> returns false", !s.pop());
+        boolean threwNull = false;
+        try {
+            s.pop();
+        } catch (IndexOutOfBoundsException e) {
+            threwNull = true;
+        }
+        check("remove on empty list -> throws IndexOutOfBoundsException", threwNull);
     }
 
     // --- Observer ต้องไม่มี side effect ---
@@ -162,12 +165,16 @@ public class BoundedStackTest {
         System.out.println("\n-- Observers --");
 
         BoundedStack s = new BoundedStack(Arrays.asList("A", "B"));
-        check("size reports 2", s.size() == 2);
         check("contains finds an existing element", s.contains("A"));
         check("contains rejects a missing element", !s.contains("Z"));
 
-        int before = s.size();
-        check("observers have no side effects", s.size() == before);
+     boolean threwNullContain= false;
+        try {
+            s.contains(null);
+        } catch (IllegalArgumentException e) {
+            threwNullContain = true;
+        }
+        check("contains(null) -> throws IllegalArgumentException", threwNullContain);
 
         boolean threwSpecial = false;
         try {

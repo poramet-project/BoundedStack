@@ -136,17 +136,20 @@ public class BoundedStack {
     }
 
     /**
-     * ลบข้อความออกจาก elements
+     * ลบข้อความออกจากตำแหน่งสุดท้าย elements และ คืนข้อความตำแหน่งสุดท้าย
      * 
-     * @return true ถ้าลบข้อความสำเร็จ, false ถ้าไม่พบข้อความ
+     * @return ข้อความตำแหน่งสุดท้าย
+     * @throws IndexOutOfBoundsException ถ้า เมื่อ elements ว่างอยู่
+     *                                   (ไม่มีสมาชิกเลย)
      */
-    public boolean pop() {
-        if (elements.isEmpty()||elements.size()==0) {
-            return false;
+    public String pop() {
+        if (elements.isEmpty()) {
+            throw new IndexOutOfBoundsException();
         }
+        String s = elements.get(elements.size() - 1);
         elements.remove(elements.size() - 1);
         checkRep();
-        return true;
+        return s;
     }
 
     // ===== Observers =====
@@ -173,13 +176,14 @@ public class BoundedStack {
      * คืนข้อความตำแหน่งสุดท้าย
      * 
      * @return ข้อความตำแหน่งสุดท้าย
-     * @throws IndexOutOfBoundsException ถ้า เมื่อ elements ว่างอยู่ (ไม่มีสมาชิกเลย)
+     * @throws IndexOutOfBoundsException ถ้า เมื่อ elements ว่างอยู่
+     *                                   (ไม่มีสมาชิกเลย)
      */
     public String peek() {
-       if (elements.isEmpty()) {
-        throw new IndexOutOfBoundsException();
-       }
-        return elements.get(elements.size()-1);
+        if (elements.isEmpty()) {
+            throw new IndexOutOfBoundsException();
+        }
+        return elements.get(elements.size() - 1);
     }
 
     /**
@@ -200,12 +204,15 @@ public class BoundedStack {
      * @throws IllegalArgumentException ถ้า information ผิดเงื่อนไข
      */
     public boolean contains(String information) {
-         for (int i = 0; i < information.length(); i++) {
-                char c = information.charAt(i);
-                if (!Character.isLetterOrDigit(c) && c != ' ') {
-                    throw new IllegalArgumentException();
-                }
+        if (information==null) {
+             throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < information.length(); i++) {
+            char c = information.charAt(i);
+            if (!Character.isLetterOrDigit(c) && c != ' ') {
+                throw new IllegalArgumentException();
             }
+        }
         return elements.contains(information);
     }
 
