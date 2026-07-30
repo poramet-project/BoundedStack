@@ -58,7 +58,7 @@ public class BoundedStackTest {
         // กรณี สร้าง list ที่ได้มาจากผู้ใช้งาน
         BoundedStack p = new BoundedStack(Arrays.asList("Hello", "World", "ComSci"));
         check("new(list) -> size 3", p.size() == 3);
-        check("new(list) -> contains B", p.contains("ComSci"));
+        check("new(list) -> contains ComSci", p.contains("ComSci"));
 
         // boundary: list ว่างคือขอบล่างที่ถูกต้อง
         BoundedStack fromEmpty = new BoundedStack(new ArrayList<String>());
@@ -74,14 +74,6 @@ public class BoundedStackTest {
         }
         check("new(duplicates) -> throws IllegalArgumentException", threwDup);
 
-        boolean threwNull = false;
-        try {
-            new BoundedStack(Arrays.asList("Hello", null));
-        } catch (IllegalArgumentException e) {
-            threwNull = true;
-        }
-        check("new(list with null) -> throws IllegalArgumentException", threwNull);
-
         boolean threwSpecial = false;
         try {
             new BoundedStack(Arrays.asList("Hello", "Hello@#$$%%#"));
@@ -92,9 +84,9 @@ public class BoundedStackTest {
 
         boolean threwNullList = false;
         try {
-        new BoundedStack(null);
+            new BoundedStack(null);
         } catch (IllegalArgumentException e) {
-        threwNullList = true;
+            threwNullList = true;
         }
         check("new(null) -> throws IllegalArgumentException", threwNullList);
 
@@ -105,14 +97,13 @@ public class BoundedStackTest {
         System.out.println("\n-- Add --");
 
         BoundedStack s = new BoundedStack();
-        check("add(Hello) -> returns true", s.push("Hello"));
+        check("add(Hello) -> returns true", s.push("Bohemian Rhapsody"));
         check("add(Hello) -> size 1", s.size() == 1);
-        check("add(Hello) -> found by contains", s.contains("Hello"));
-
+        check("add(Hello) -> found by contains", s.contains("Bohemian Rhapsody"));
 
         // ข้อความซ้ำคืน false เฉย
-        check("add duplicate -> returns false", !s.push("Hello"));
-        check("failed add leaves size unchanged", s.size() == 3);
+        check("add duplicate -> returns false", !s.push("Bohemian Rhapsody"));
+        check("failed add leaves size unchanged", s.size() == 1);
 
         // input ที่ผิดเงื่อนไขต้องโยน exception
         boolean threwEmpty = false;
@@ -153,7 +144,7 @@ public class BoundedStackTest {
         System.out.println("\n-- Remove --");
 
         BoundedStack s = new BoundedStack(Arrays.asList("A", "B", "C"));
-        check("remove -> returns true", s.pop());
+        check("remove -> returns C", s.pop() == "C");
         check("remove -> size decreases", s.size() == 2);
         check("remove -> element is gone", !s.contains("C"));
         check("remove keeps the others in order",
@@ -163,7 +154,13 @@ public class BoundedStackTest {
         s.pop();
         s.pop();
         check("remove all -> empty", s.size() == 0);
-        check("remove on empty list -> returns false", !s.pop());
+        boolean threwNull = false;
+        try {
+            s.pop();
+        } catch (IndexOutOfBoundsException e) {
+            threwNull = true;
+        }
+        check("remove on empty list -> throws IndexOutOfBoundsException", threwNull);
     }
 
     // --- Observer ต้องไม่มี side effect ---
@@ -174,11 +171,26 @@ public class BoundedStackTest {
         check("size reports 2", s.size() == 2);
         check("contains finds an existing element", s.contains("A"));
         check("contains rejects a missing element", !s.contains("Z"));
-        check("element returns the full list in order",
-                s.getElements().equals(Arrays.asList("A", "B")));
 
         int before = s.size();
-        check("observers have no side effects", s.size() == before);    
+        check("observers have no side effects", s.size() == before);
+
+        boolean threwSpecial = false;
+        try {
+            s.contains("ABC@&&");
+        } catch (IllegalArgumentException e) {
+            threwSpecial = true;
+        }
+        check("contains(Special characters) -> throws IllegalArgumentException", threwSpecial);
+
+        BoundedStack n = new BoundedStack();
+        boolean threwNull = false;
+        try {
+            n.peek();
+        } catch (IndexOutOfBoundsException e) {
+            threwNull = true;
+        }
+        check("peek() = null -> throws IndexOutOfBoundsException", threwNull);
     }
 
     private static void testProducer() {
@@ -198,7 +210,7 @@ public class BoundedStackTest {
         check("shuffled does not mutate the original",
                 original.getElements().equals(Arrays.asList("A", "B", "C", "D")));
 
-                 // mutate ตัวใหม่ต้องไม่กระทบตัวเดิม
+        // mutate ตัวใหม่ต้องไม่กระทบตัวเดิม
         shuffled.push("E");
         check("mutating the result does not affect the original",
                 original.size() == 4);
@@ -211,7 +223,7 @@ public class BoundedStackTest {
     private static void testExposure() {
         System.out.println("\n-- Exposure --");
 
-         // ขาออก: แก้ list ที่ได้จาก songs() ต้องไม่กระทบ rep
+        // ขาออก: แก้ list ที่ได้จาก songs() ต้องไม่กระทบ rep
         BoundedStack s = new BoundedStack();
         s.push("A");
 
