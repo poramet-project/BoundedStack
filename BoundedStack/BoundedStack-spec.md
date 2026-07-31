@@ -103,6 +103,7 @@ AF(elements, capacity) = ลำดับข้อความตาม index ใ
 
 | เมธอด | throw เมื่อไหร่ | throw อะไร |
 |---|---|---|
+| `BoundedStack(-1)` | capacity<0 | `IllegalArgumentException` |
 | `BoundedStack(List)` | null / เกิน capacity / มี null-ว่าง-ซ้ำ-อักขระพิเศษ | `IllegalArgumentException` |
 | `push(String)` | information null / ว่าง / อักขระพิเศษ | `IllegalArgumentException` |
 | `pop()` | stack ว่าง | `IndexOutOfBoundsException` |

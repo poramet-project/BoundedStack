@@ -64,6 +64,9 @@ public class BoundedStack {
      * 
      */
     public BoundedStack(int capacity) {
+        if (capacity<0) {
+            throw new IllegalArgumentException();
+        }  
         this.elements = new ArrayList<>();
         this.capacity = capacity;
         checkRep();
@@ -76,11 +79,11 @@ public class BoundedStack {
      * @throws IllegalArgumentException ถ้า initial ผิดเงื่อนไข
      */
     public BoundedStack(List<String> initial) {
-       
+
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-       this.capacity = initial.size();
+        this.capacity = initial.size();
         Set<String> seen = new HashSet<>();
         for (String s : initial) {
             if (s == null) {
@@ -116,7 +119,7 @@ public class BoundedStack {
      */
     public boolean push(String information) {
 
-        if (information == null || information.isEmpty()) {
+        if (information == null || information == "") {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < information.length(); i++) {
@@ -203,8 +206,8 @@ public class BoundedStack {
      * @throws IllegalArgumentException ถ้า information ผิดเงื่อนไข
      */
     public boolean contains(String information) {
-        if (information==null) {
-             throw new IllegalArgumentException();
+        if (information == null) {
+            throw new IllegalArgumentException();
         }
         for (int i = 0; i < information.length(); i++) {
             char c = information.charAt(i);

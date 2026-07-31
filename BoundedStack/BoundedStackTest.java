@@ -60,9 +60,15 @@ public class BoundedStackTest {
         check("new(list) -> size 3", p.size() == 3);
         check("new(list) -> contains ComSci", p.contains("ComSci"));
 
-        
         // input ที่ผิดเงื่อนไขต้องโยน exception ไม่ใช่ปล่อยผ่าน
 
+        boolean threwZero = false;
+        try {
+            new BoundedStack(-1);
+        } catch (IllegalArgumentException e) {
+            threwZero = true;
+        }
+        check("new(<0) -> throws IllegalArgumentException", threwZero);
         boolean threwDup = false;
         try {
             new BoundedStack(Arrays.asList("py", "py"));
@@ -168,7 +174,7 @@ public class BoundedStackTest {
         check("contains finds an existing element", s.contains("A"));
         check("contains rejects a missing element", !s.contains("Z"));
 
-     boolean threwNullContain= false;
+        boolean threwNullContain = false;
         try {
             s.contains(null);
         } catch (IllegalArgumentException e) {
